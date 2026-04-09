@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Reynolds — Professional Trader</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #34d399;
+            --green-light: #6ee7b7;
+            --green-glow: #a7f3d0;
+            --green-deep: #059669;
+            --green-dark: #047857;
+            --mint: #ecfdf5;
+            --bg: #0a0f0d;
+            --bg-card: #111916;
+            --bg-surface: #141f1a;
+            --bg-elevated: #1a2922;
+            --text: #e2efe8;
+            --text-dim: #7fa393;
+            --text-muted: #4a6b5d;
+            --white: #ffffff;
+            --border: rgba(52, 211, 153, 0.12);
+            --border-hover: rgba(52, 211, 153, 0.3);
+            --glow: 0 0 40px rgba(52, 211, 153, 0.15);
+            --glow-strong: 0 0 60px rgba(52, 211, 153, 0.25);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* === ANIMATED GRID BACKGROUND === */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(52, 211, 153, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(52, 211, 153, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* === FLOATING CHART LINES (Canvas) === */
+        #chartCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+        }
+
+        /* === CANDLESTICK DECORATIONS === */
+        .candle-float {
+            position: fixed;
+            width: 8px;
+            opacity: 0.06;
+            z-index: 0;
+            pointer-events: none;
+            animation: candleFloat linear infinite;
+        }
+
+        .candle-float .wick {
+            width: 2px;
+            background: var(--green);
+            margin: 0 auto;
+        }
+
+        .candle-float .body {
+            width: 8px;
+            border-radius: 2px;
+        }
+
+        .candle-float.green .body { background: var(--green); }
+        .candle-float.green .wick { background: var(--green); }
+        .candle-float.red .body { background: #ef4444; }
+        .candle-float.red .wick { background: #ef4444; }
+
+        @keyframes candleFloat {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.06; }
+            90% { opacity: 0.06; }
+            100% { transform: translateY(-10vh) rotate(10deg); opacity: 0; }
+        }
+
+        /* === NAVBAR === */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 18px 40px;
+            background: rgba(10, 15, 13, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s;
+        }
+
+        .navbar.scrolled {
+            padding: 12px 40px;
+            background: rgba(10, 15, 13, 0.95);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .nav-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-logo-dot {
+            width: 10px; height: 10px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: logoPulse 2s ease infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--green); }
+
+        .nav-cta {
+            padding: 8px 20px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid var(--border-hover);
+            border-radius: 8px;
+            color: var(--green) !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+        }
+
+        .nav-cta:hover {
+            background: rgba(52, 211, 153, 0.2) !important;
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .nav-toggle span {
+            width: 22px; height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* === HERO === */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 40px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -15%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.08) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text {
+            animation: slideUp 0.9s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 16px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .hero-tag .live-dot {
+            width: 6px; height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: logoPulse 2s ease infinite;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.8rem;
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--green), var(--green-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        /* === LIVE TICKER BAR === */
+        .hero-ticker {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 36px;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-width: 520px;
+            overflow: hidden;
+        }
+
+        .ticker-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .ticker-symbol {
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .ticker-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+
+        .ticker-change {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .ticker-change.up {
+            color: var(--green);
+            background: rgba(52, 211, 153, 0.1);
+        }
+
+        .ticker-change.down {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-deep) 0%, var(--green) 100%);
+            color: var(--bg);
+            box-shadow: 0 4px 20px rgba(52, 211, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(52, 211, 153, 0.45);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border-hover);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(52, 211, 153, 0.06);
+            border-color: var(--green);
+            color: var(--green);
+            transform: translateY(-3px);
+        }
+
+        /* === HERO PHOTO AREA === */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            animation: slideUp 0.9s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero-photo-container {
+            position: relative;
+            width: 380px;
+            height: 460px;
+        }
+
+        .hero-photo-card {
+            width: 100%;
+            height: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--glow);
+            position: relative;
+        }
+
+        .hero-photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 5s ease;
+        }
+
+        .hero-photo-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .hero-photo-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 40%;
+            background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Floating stat badges */
+        .float-badge {
+            position: absolute;
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            z-index: 3;
+            animation: floatBadge 3s ease-in-out infinite;
+        }
+
+        .float-badge-1 {
+            top: 20px; right: -30px;
+            animation-delay: 0s;
+        }
+
+        .float-badge-2 {
+            bottom: 80px; left: -40px;
+            animation-delay: 1.5s;
+        }
+
+        .float-badge-3 {
+            bottom: 30px; right: -20px;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes floatBadge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .float-badge .fb-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .float-badge .fb-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* === SECTIONS === */
+        .section {
+            padding: 100px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto 64px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--green);
+            margin-bottom: 14px;
+            padding: 4px 12px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .section-desc {
+            font-size: 1.02rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        /* === STATS BAR (New block — trading stats) === */
+        .stats-bar {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 48px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 24px 16px;
+            border-radius: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            transition: all 0.4s;
+        }
+
+        .stat-item:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--glow);
+            transform: translateY(-4px);
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* === ANIMATED COUNTER === */
+        .count-up {
+            display: inline-block;
+        }
+
+        /* === ABOUT === */
+        .about {
+            background: var(--bg-surface);
+        }
+
+        .about-layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .about-photo {
+            position: relative;
+        }
+
+        .about-photo img {
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: transform 0.5s;
+        }
+
+        .about-photo:hover img {
+            transform: scale(1.02);
+        }
+
+        .about-photo-accent {
+            position: absolute;
+            top: -12px; left: -12px;
+            width: 100%; height: 100%;
+            border: 2px solid var(--border-hover);
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        .about-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            color: var(--white);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .about-content p {
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            font-weight: 300;
+            line-height: 1.9;
+        }
+
+        .about-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .about-tag {
+            padding: 8px 16px;
+            background: rgba(52, 211, 153, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.82rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* === PERFORMANCE CHART SECTION (New!) === */
+        .performance {
+            background: var(--bg);
+        }
+
+        .perf-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .perf-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green-deep), var(--green), var(--green-light));
+        }
+
+        .perf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .perf-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .perf-badge {
+            padding: 6px 14px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid var(--border-hover);
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        /* Animated bars chart */
+        .perf-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 200px;
+            padding: 0 10px;
+        }
+
+        .perf-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .perf-bar {
+            width: 100%;
+            border-radius: 6px 6px 2px 2px;
+            background: linear-gradient(to top, var(--green-deep), var(--green));
+            min-height: 8px;
+            transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            opacity: 0.85;
+        }
+
+        .perf-bar:hover {
+            opacity: 1;
+            box-shadow: var(--glow);
+        }
+
+        .perf-bar-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .perf-bar-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .perf-legend {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .perf-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .perf-legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 3px;
+        }
+
+        /* === METHODOLOGY === */
+        .methodology {
+            background: var(--bg-surface);
+        }
+
+        .method-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .method-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 28px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .method-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.04) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .method-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            box-shadow: var(--glow);
+        }
+
+        .method-card:hover::before { opacity: 1; }
+
+        .method-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: rgba(52, 211, 153, 0.15);
+            margin-bottom: 12px;
+        }
+
+        .method-card h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
+            color: var(--white);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .method-card p {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        /* === JOURNEY (Horizontal scroll cards) === */
+        .journey {
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .journey-track {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--green-deep) var(--bg-card);
+        }
+
+        .journey-track::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .journey-track::-webkit-scrollbar-track {
+            background: var(--bg-card);
+            border-radius: 3px;
+        }
+
+        .journey-track::-webkit-scrollbar-thumb {
+            background: var(--green-deep);
+            border-radius: 3px;
+        }
+
+        .journey-card {
+            min-width: 220px;
+            padding: 32px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            flex-shrink: 0;
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .journey-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 24px; right: 24px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .journey-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-6px);
+        }
+
+        .journey-card:hover::before { opacity: 1; }
+
+        .journey-year {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .journey-text {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* === GALLERY === */
+        .gallery {
+            background: var(--bg-surface);
+        }
+
+        .gallery-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .gallery-card {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.5s;
+            aspect-ratio: 4/5;
+        }
+
+        .gallery-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            box-shadow: var(--glow-strong);
+        }
+
+        .gallery-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-card-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 50px 20px 20px;
+            background: linear-gradient(to top, rgba(10, 15, 13, 0.85), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .gallery-card:hover .gallery-card-overlay { opacity: 1; }
+
+        .gallery-card-overlay span {
+            color: var(--white);
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        /* === COMPARISON === */
+        .comparison {
+            background: var(--bg);
+        }
+
+        .comp-table {
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+        }
+
+        .comp-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+
+        .comp-row:last-child { border-bottom: none; }
+
+        .comp-row:not(.comp-head):hover {
+            background: rgba(52, 211, 153, 0.03);
+        }
+
+        .comp-head {
+            background: linear-gradient(135deg, var(--green-dark), var(--green-deep));
+        }
+
+        .comp-cell {
+            padding: 16px 20px;
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .comp-cell:first-child {
+            justify-content: flex-start;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .comp-head .comp-cell {
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* === TESTIMONIALS (New block!) === */
+        .testimonials {
+            background: var(--bg-surface);
+        }
+
+        .test-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .test-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 32px 24px;
+            transition: all 0.4s;
+        }
+
+        .test-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+        }
+
+        .test-stars {
+            color: var(--green);
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+            letter-spacing: 2px;
+        }
+
+        .test-text {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-style: italic;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .test-author {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* === TIMER === */
+        .timer-section {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            text-align: center;
+            padding: 80px 40px;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timer-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(52, 211, 153, 0.06) 0%, transparent 60%);
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 32px 0 40px;
+        }
+
+        .timer-box {
+            min-width: 100px;
+            padding: 22px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .timer-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--green);
+            line-height: 1;
+        }
+
+        .timer-lbl {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 6px;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            background: var(--bg);
+            padding: 48px 40px 32px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            color: var(--white);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .footer-disclaimer {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            font-weight: 300;
+            line-height: 1.7;
+            max-width: 500px;
+            margin: 0 auto 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover { color: var(--green); }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        /* === REVEAL === */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 40px;
+            }
+
+            .hero-desc { margin: 0 auto 32px; }
+
+            .hero-ticker { margin: 0 auto 36px; }
+
+            .hero-buttons { justify-content: center; }
+
+            .hero-visual { order: -1; }
+
+            .hero-photo-container {
+                width: 300px; height: 370px;
+            }
+
+            .float-badge-1 { right: -10px; }
+            .float-badge-2 { left: -10px; }
+
+            .about-layout {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .about-tags { justify-content: center; }
+
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+            .method-grid { grid-template-columns: 1fr 1fr; }
+
+            .test-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 14px 20px; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%; left: 0; right: 0;
+                flex-direction: column;
+                background: rgba(10, 15, 13, 0.97);
+                backdrop-filter: blur(20px);
+                padding: 20px;
+                gap: 14px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-toggle { display: flex; }
+
+            .hero { padding: 100px 20px 60px; }
+            .hero h1 { font-size: 2.4rem; }
+
+            .hero-ticker {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .section { padding: 64px 20px; }
+            .section-title { font-size: 2rem; }
+
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+            .stat-number { font-size: 1.8rem; }
+
+            .method-grid { grid-template-columns: 1fr; }
+
+            .gallery-grid { grid-template-columns: 1fr; }
+
+            .comp-cell { padding: 12px 10px; font-size: 0.78rem; }
+
+            .hero-photo-container {
+                width: 260px; height: 340px;
+            }
+
+            .float-badge { display: none; }
+
+            .timer-display { gap: 10px; }
+            .timer-box { min-width: 72px; padding: 16px 12px; }
+            .timer-val { font-size: 2rem; }
+
+            .perf-container { padding: 24px 16px; }
+
+            .timer-section { padding: 60px 20px; }
+
+            .stats-bar { padding: 32px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Grid background -->
+    <div class="grid-bg"></div>
+
+    <!-- Canvas for chart lines -->
+    <canvas id="chartCanvas"></canvas>
+
+    <!-- Floating candlesticks -->
+    <div id="candles"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-dot"></div>
+            Alex Reynolds
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#stats">Stats</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#performance">Performance</a></li>
+            <li><a href="#methodology">Strategy</a></li>
+            <li><a href="#journey">Journey</a></li>
+            <li><a href="https://t.me/AlexReynoldsTrader" target="_blank" class="nav-cta">Join Free</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="hero-tag">
+                    <div class="live-dot"></div>
+                    Live Signals — Active Now
+                </div>
+                <h1>Trade the<br>Markets with<br><span class="highlight">Precision</span></h1>
+                <p class="hero-desc">I'm Alex — a professional trader based in Lisbon. Turning market data into consistent profits since 2015. No hype, just results.</p>
+
+                <div class="hero-ticker">
+                    <div class="ticker-item">
+                        <span class="ticker-symbol">EUR/USD</span>
+                        <span class="ticker-value" style="color:var(--green)">1.0847</span>
+                        <span class="ticker-change up">+0.32%</span>
+                    </div>
+                    <div class="ticker-item">
+                        <span class="ticker-symbol">BTC</span>
+                        <span class="ticker-value" style="color:var(--green)">67,240</span>
+                        <span class="ticker-change up">+1.8%</span>
+                    </div>
+                    <div class="ticker-item">
+                        <span class="ticker-symbol">GOLD</span>
+                        <span class="ticker-value" style="color:#ef4444">2,318</span>
+                        <span class="ticker-change down">-0.14%</span>
+                    </div>
+                </div>
+
+                <div class="hero-buttons">
+                    <a href="https://www.youtube.com/@AlexReynoldsTrades/videos" class="btn btn-primary" target="_blank">▶ Watch on YouTube</a>
+                    <a href="https://t.me/AlexReynoldsTrader" class="btn btn-ghost" target="_blank">Join Telegram</a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="hero-photo-container">
+                    <div class="hero-photo-card">
+                        <img src="alex-hero.jpg" alt="Alex Reynolds">
+                    </div>
+                    <div class="float-badge float-badge-1">
+                        <div class="fb-value">91%</div>
+                        <div class="fb-label">Win Rate</div>
+                    </div>
+                    <div class="float-badge float-badge-2">
+                        <div class="fb-value">10Y+</div>
+                        <div class="fb-label">Experience</div>
+                    </div>
+                    <div class="float-badge float-badge-3">
+                        <div class="fb-value">6K+</div>
+                        <div class="fb-label">Students</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar" id="stats">
+        <div class="stats-grid reveal">
+            <div class="stat-item">
+                <div class="stat-number"><span class="count-up" data-target="2847">0</span>+</div>
+                <div class="stat-label">Trades This Year</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><span class="count-up" data-target="91">0</span>%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><span class="count-up" data-target="6200">0</span>+</div>
+                <div class="stat-label">Community Members</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><span class="count-up" data-target="10">0</span>Y+</div>
+                <div class="stat-label">In the Markets</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About -->
+    <section class="section about" id="about">
+        <div class="about-layout reveal">
+            <div class="about-photo">
+                <div class="about-photo-accent"></div>
+                <img src="alex-life.jpg" alt="Alex lifestyle">
+            </div>
+            <div class="about-content">
+                <span class="section-tag">About</span>
+                <h3>Manchester Roots,<br>Lisbon Lifestyle</h3>
+                <p>I started trading at 17 in Manchester with £200 and a lot of curiosity. After blowing two accounts and learning the hard way, I developed a systematic approach that changed everything.</p>
+                <p>Today I trade from Lisbon, run a community of 6,000+ traders, and share everything I know — live signals, educational content, and real trade breakdowns. No fluff, no fake screenshots. Just real trading.</p>
+                <div class="about-tags">
+                    <span class="about-tag">📍 Lisbon, Portugal</span>
+                    <span class="about-tag">🇬🇧 From Manchester</span>
+                    <span class="about-tag">📊 Forex & Crypto</span>
+                    <span class="about-tag">🎯 Price Action</span>
+                    <span class="about-tag">⚡ Scalping + Swing</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Chart -->
+    <section class="section performance" id="performance">
+        <div class="section-header reveal">
+            <span class="section-tag">Performance</span>
+            <h2 class="section-title">Monthly Returns</h2>
+            <p class="section-desc">Verified monthly trading performance. Consistency over perfection.</p>
+        </div>
+        <div class="perf-container reveal">
+            <div class="perf-header">
+                <div class="perf-title">📈 2024 — Monthly ROI %</div>
+                <div class="perf-badge">✦ Verified Results</div>
+            </div>
+            <div class="perf-chart" id="perfChart">
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">12%</div>
+                    <div class="perf-bar" data-height="60"></div>
+                    <div class="perf-bar-label">Jan</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">18%</div>
+                    <div class="perf-bar" data-height="90"></div>
+                    <div class="perf-bar-label">Feb</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">9%</div>
+                    <div class="perf-bar" data-height="45"></div>
+                    <div class="perf-bar-label">Mar</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">21%</div>
+                    <div class="perf-bar" data-height="105"></div>
+                    <div class="perf-bar-label">Apr</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">15%</div>
+                    <div class="perf-bar" data-height="75"></div>
+                    <div class="perf-bar-label">May</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">24%</div>
+                    <div class="perf-bar" data-height="120"></div>
+                    <div class="perf-bar-label">Jun</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">11%</div>
+                    <div class="perf-bar" data-height="55"></div>
+                    <div class="perf-bar-label">Jul</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">19%</div>
+                    <div class="perf-bar" data-height="95"></div>
+                    <div class="perf-bar-label">Aug</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">16%</div>
+                    <div class="perf-bar" data-height="80"></div>
+                    <div class="perf-bar-label">Sep</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">22%</div>
+                    <div class="perf-bar" data-height="110"></div>
+                    <div class="perf-bar-label">Oct</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">14%</div>
+                    <div class="perf-bar" data-height="70"></div>
+                    <div class="perf-bar-label">Nov</div>
+                </div>
+                <div class="perf-bar-wrapper">
+                    <div class="perf-bar-value">27%</div>
+                    <div class="perf-bar" data-height="135"></div>
+                    <div class="perf-bar-label">Dec</div>
+                </div>
+            </div>
+            <div class="perf-legend">
+                <div class="perf-legend-item">
+                    <div class="perf-legend-dot" style="background: var(--green);"></div>
+                    Monthly ROI
+                </div>
+                <div class="perf-legend-item">
+                    <div class="perf-legend-dot" style="background: var(--text-muted);"></div>
+                    Avg: 17.3%
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="section methodology" id="methodology">
+        <div class="section-header reveal">
+            <span class="section-tag">Strategy</span>
+            <h2 class="section-title">How I Trade</h2>
+            <p class="section-desc">A systematic approach built on 10 years of market experience and thousands of trades.</p>
+        </div>
+        <div class="method-grid">
+            <div class="method-card reveal">
+                <div class="method-num">01</div>
+                <h4>Price Action</h4>
+                <p>No indicators clutter. Clean charts, key levels, and candlestick patterns tell the real story.</p>
+            </div>
+            <div class="method-card reveal">
+                <div class="method-num">02</div>
+                <h4>Multi-Timeframe</h4>
+                <p>Analyzing from weekly down to 15-minute charts ensures alignment and high-conviction entries.</p>
+            </div>
+            <div class="method-card reveal">
+                <div class="method-num">03</div>
+                <h4>Risk First</h4>
+                <p>Maximum 1.5% risk per trade. Every setup has a defined stop-loss before entry. No exceptions.</p>
+            </div>
+            <div class="method-card reveal">
+                <div class="method-num">04</div>
+                <h4>Session Trading</h4>
+                <p>London & New York sessions only. Focused execution during peak volatility hours.</p>
+            </div>
+            <div class="method-card reveal">
+                <div class="method-num">05</div>
+                <h4>Journal Everything</h4>
+                <p>Every trade documented. Weekly review sessions to identify patterns and eliminate mistakes.</p>
+            </div>
+            <div class="method-card reveal">
+                <div class="method-num">06</div>
+                <h4>Copy My Trades</h4>
+                <p>Don't want to learn yet? Copy my exact positions automatically. Your account, my execution.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Journey -->
+    <section class="section journey" id="journey">
+        <div class="section-header reveal">
+            <span class="section-tag">Timeline</span>
+            <h2 class="section-title">My Trading Journey</h2>
+            <p class="section-desc">From a curious teenager in Manchester to a full-time trader in Lisbon.</p>
+        </div>
+        <div class="journey-track reveal">
+            <div class="journey-card">
+                <div class="journey-year">2015</div>
+                <div class="journey-text">First trade at 17. Opened a demo account and was instantly hooked by the markets.</div>
+            </div>
+            <div class="journey-card">
+                <div class="journey-year">2016</div>
+                <div class="journey-text">Blew my first real account. Best lesson I ever paid for — learned risk management.</div>
+            </div>
+            <div class="journey-card">
+                <div class="journey-year">2018</div>
+                <div class="journey-text">Developed my core price action strategy. First consistently profitable year.</div>
+            </div>
+            <div class="journey-card">
+                <div class="journey-year">2020</div>
+                <div class="journey-text">Started YouTube channel. Began sharing trade breakdowns and educational content.</div>
+            </div>
+            <div class="journey-card">
+                <div class="journey-year">2022</div>
+                <div class="journey-text">Moved to Lisbon. Launched Telegram community. 2,000 members in 3 months.</div>
+            </div>
+            <div class="journey-card">
+                <div class="journey-year">2024</div>
+                <div class="journey-text">6K+ students. Copy trading launched. Scaling mentorship to the next level.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="section gallery" id="gallery">
+        <div class="section-header reveal">
+            <span class="section-tag">Life</span>
+            <h2 class="section-title">Trading Funds Freedom</h2>
+        </div>
+        <div class="gallery-grid reveal">
+            <div class="gallery-card">
+                <img src="alex-work.jpg" alt="Alex trading setup">
+                <div class="gallery-card-overlay"><span>Lisbon penthouse views ✦</span></div>
+            </div>
+            <div class="gallery-card">
+                <img src="alex-travel.jpg" alt="Alex travel">
+                <div class="gallery-card-overlay"><span>The world is the office 🌍</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="section comparison" id="comparison">
+        <div class="section-header reveal">
+            <span class="section-tag">Comparison</span>
+            <h2 class="section-title">Why Trade With Alex?</h2>
+        </div>
+        <div class="comp-table reveal">
+            <div class="comp-row comp-head">
+                <div class="comp-cell">Criteria</div>
+                <div class="comp-cell">Others</div>
+                <div class="comp-cell">Alex ✦</div>
+            </div>
+            <div class="comp-row">
+                <div class="comp-cell">Verified Track Record</div>
+                <div class="comp-cell">❌ Fake screenshots</div>
+                <div class="comp-cell">✅ 10 years proven</div>
+            </div>
+            <div class="comp-row">
+                <div class="comp-cell">Live Signals</div>
+                <div class="comp-cell">❌ Delayed or vague</div>
+                <div class="comp-cell">✅ Real-time, exact levels</div>
+            </div>
+            <div class="comp-row">
+                <div class="comp-cell">Risk Management</div>
+                <div class="comp-cell">❌ Never mentioned</div>
+                <div class="comp-cell">✅ 1.5% max per trade</div>
+            </div>
+            <div class="comp-row">
+                <div class="comp-cell">Education</div>
+                <div class="comp-cell">❌ Generic courses</div>
+                <div class="comp-cell">✅ Live breakdowns daily</div>
+            </div>
+            <div class="comp-row">
+                <div class="comp-cell">Copy Trading</div>
+                <div class="comp-cell">❌ Not available</div>
+                <div class="comp-cell">✅ Fully automated</div>
+            </div>
+            <div class="comp-row">
+                <div class="comp-cell">Community</div>
+                <div class="comp-cell">❌ Dead groups</div>
+                <div class="comp-cell">✅ 6K+ active daily</div>
+            </div>
+            <div class="comp-row">
+                <div class="comp-cell">Transparency</div>
+                <div class="comp-cell">❌ Only wins shown</div>
+                <div class="comp-cell">✅ All trades shared</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section testimonials">
+        <div class="section-header reveal">
+            <span class="section-tag">Reviews</span>
+            <h2 class="section-title">What Students Say</h2>
+        </div>
+        <div class="test-grid reveal">
+            <div class="test-card">
+                <div class="test-stars">★★★★★</div>
+                <div class="test-text">"Alex's signals are incredibly accurate. I've been profitable every single month since joining. The risk management alone was worth it."</div>
+                <div class="test-author">— Marcus D., Germany</div>
+            </div>
+            <div class="test-card">
+                <div class="test-stars">★★★★★</div>
+                <div class="test-text">"The copy trading feature is a game changer. I don't have time to watch charts all day, but Alex's trades run on my account automatically."</div>
+                <div class="test-author">— Sophie L., France</div>
+            </div>
+            <div class="test-card">
+                <div class="test-stars">★★★★★</div>
+                <div class="test-text">"Most 'gurus' are all talk. Alex actually shows his losses too — that's how I knew he was real. Best community I've been part of."</div>
+                <div class="test-author">— James K., UK</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timer -->
+    <section class="timer-section" id="timer">
+        <span class="section-tag">Limited Spots</span>
+        <h2 class="section-title" style="color: var(--white); margin-top: 12px;">Free VIP Access Closing Soon</h2>
+        <p class="section-desc" style="margin: 0 auto;">Join now for free signals, copy trading access, and private mentorship.</p>
+        <div class="timer-display">
+            <div class="timer-box">
+                <div class="timer-val" id="hours">11</div>
+                <div class="timer-lbl">Hours</div>
+            </div>
+            <div class="timer-box">
+                <div class="timer-val" id="minutes">00</div>
+                <div class="timer-lbl">Minutes</div>
+            </div>
+            <div class="timer-box">
+                <div class="timer-val" id="seconds">00</div>
+                <div class="timer-lbl">Seconds</div>
+            </div>
+        </div>
+        <a href="https://t.me/AlexReynoldsTrader" class="btn btn-primary" target="_blank">Claim Free VIP Access →</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-brand">Alex Reynolds</div>
+        <p class="footer-disclaimer">Trading involves significant risk. Past performance does not guarantee future results. Only trade with capital you can afford to lose. This is not financial advice.</p>
+        <div class="footer-links">
+            <a href="https://www.youtube.com/@AlexReynoldsTrades/videos" target="_blank">YouTube</a>
+            <a href="https://t.me/AlexReynoldsTrader" target="_blank">Telegram</a>
+        </div>
+        <div class="footer-copy">© 2025 Alex Reynolds. All rights reserved.</div>
+    </footer>
+
+    <script>
+        // === FLOATING CANDLESTICKS ===
+        const candlesContainer = document.getElementById('candles');
+        for (let i = 0; i < 15; i++) {
+            const candle = document.createElement('div');
+            const isGreen = Math.random() > 0.4;
+            candle.classList.add('candle-float', isGreen ? 'green' : 'red');
+
+            const wickTop = Math.random() * 20 + 5;
+            const bodyH = Math.random() * 30 + 10;
+            const wickBot = Math.random() * 15 + 3;
+
+            candle.innerHTML = `
+                <div class="wick" style="height:${wickTop}px"></div>
+                <div class="body" style="height:${bodyH}px"></div>
+                <div class="wick" style="height:${wickBot}px"></div>
+            `;
+
+            candle.style.left = Math.random() * 100 + '%';
+            candle.style.animationDuration = (Math.random() * 18 + 14) + 's';
+            candle.style.animationDelay = (Math.random() * 12) + 's';
+
+            candlesContainer.appendChild(candle);
+        }
+
+        // === CHART CANVAS (animated lines) ===
+        const canvas = document.getElementById('chartCanvas');
+        const ctx = canvas.getContext('2d');
+        let w, h;
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const lines = [];
+        for (let i = 0; i < 3; i++) {
+            const points = [];
+            let y = h * (0.3 + Math.random() * 0.4);
+            for (let x = 0; x <= w + 100; x += 20) {
+                y += (Math.random() - 0.48) * 8;
+                y = Math.max(h * 0.15, Math.min(h * 0.85, y));
+                points.push({ x, y });
+            }
+            lines.push({ points, offset: 0, speed: 0.3 + Math.random() * 0.5, color: `rgba(52, 211, 153, ${0.15 + Math.random() * 0.15})` });
+        }
+
+        function drawChart() {
+            ctx.clearRect(0, 0, w, h);
+            lines.forEach(line => {
+                line.offset += line.speed;
+                ctx.beginPath();
+                ctx.strokeStyle = line.color;
+                ctx.lineWidth = 1.5;
+                line.points.forEach((p, j) => {
+                    const x = p.x - line.offset;
+                    const nx = ((x % (w + 100)) + (w + 100)) % (w + 100);
+                    if (j === 0) ctx.moveTo(nx, p.y);
+                    else ctx.lineTo(nx, p.y);
+                });
+                ctx.stroke();
+            });
+            requestAnimationFrame(drawChart);
+        }
+        drawChart();
+
+        // === NAVBAR ===
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // === MOBILE NAV ===
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('active')));
+
+        // === SCROLL REVEAL ===
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.12 });
+        reveals.forEach(el => revealObs.observe(el));
+
+        // === COUNT UP ===
+        const counters = document.querySelectorAll('.count-up');
+        const counterObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const el = e.target;
+                    const target = parseInt(el.dataset.target);
+                    let current = 0;
+                    const step = Math.ceil(target / 60);
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        el.textContent = current.toLocaleString();
+                    }, 25);
+                    counterObs.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(c => counterObs.observe(c));
+
+        // === PERFORMANCE BARS ANIMATION ===
+        const perfBars = document.querySelectorAll('.perf-bar');
+        const barObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const bars = e.target.querySelectorAll ? [e.target] : [];
+                    (e.target.closest ? [e.target] : []).forEach(bar => {
+                        bar.style.height = bar.dataset.height + 'px';
+                    });
+                    barObs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        // Observe the chart container
+        const perfChart = document.getElementById('perfChart');
+        if (perfChart) {
+            const perfChartObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        perfBars.forEach((bar, i) => {
+                            setTimeout(() => {
+                                bar.style.height = bar.dataset.height + 'px';
+                            }, i * 80);
+                        });
+                        perfChartObs.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            perfChartObs.observe(perfChart);
+        }
+
+        // === 11-HOUR TIMER ===
+        function startTimer() {
+            const KEY = 'alexTimerEnd';
+            let end = localStorage.getItem(KEY);
+
+            if (!end || parseInt(end) <= Date.now()) {
+                end = Date.now() + 11 * 60 * 60 * 1000;
+                localStorage.setItem(KEY, end);
+            }
+
+            function update() {
+                let diff = Math.max(0, Math.floor((parseInt(end) - Date.now()) / 1000));
+
+                if (diff <= 0) {
+                    end = Date.now() + 11 * 60 * 60 * 1000;
+                    localStorage.setItem(KEY, end);
+                    diff = 11 * 60 * 60;
+                }
+
+                const hrs = Math.floor(diff / 3600);
+                const min = Math.floor((diff % 3600) / 60);
+                const sec = diff % 60;
+
+                document.getElementById('hours').textContent = String(hrs).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(min).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(sec).padStart(2, '0');
+            }
+
+            update();
+            setInterval(update, 1000);
+        }
+
+        startTimer();
+    </script>
+</body>
+</html>
