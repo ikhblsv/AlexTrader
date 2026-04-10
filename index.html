@@ -40,7 +40,6 @@
             line-height: 1.7;
         }
 
-        /* === ANIMATED GRID BACKGROUND === */
         .grid-bg {
             position: fixed;
             top: 0; left: 0;
@@ -53,7 +52,6 @@
             background-size: 60px 60px;
         }
 
-        /* === FLOATING CHART LINES (Canvas) === */
         #chartCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -63,7 +61,6 @@
             opacity: 0.12;
         }
 
-        /* === CANDLESTICK DECORATIONS === */
         .candle-float {
             position: fixed;
             width: 8px;
@@ -96,7 +93,6 @@
             100% { transform: translateY(-10vh) rotate(10deg); opacity: 0; }
         }
 
-        /* === NAVBAR === */
         .navbar {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -189,7 +185,6 @@
             transition: all 0.3s;
         }
 
-        /* === HERO === */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -279,7 +274,6 @@
             max-width: 500px;
         }
 
-        /* === LIVE TICKER BAR === */
         .hero-ticker {
             display: flex;
             gap: 24px;
@@ -334,7 +328,6 @@
             flex-wrap: wrap;
         }
 
-        /* === BUTTONS === */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -374,7 +367,6 @@
             transform: translateY(-3px);
         }
 
-        /* === HERO PHOTO AREA === */
         .hero-visual {
             position: relative;
             display: flex;
@@ -419,7 +411,6 @@
             pointer-events: none;
         }
 
-        /* Floating stat badges */
         .float-badge {
             position: absolute;
             padding: 10px 16px;
@@ -465,7 +456,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* === SECTIONS === */
         .section {
             padding: 100px 40px;
             position: relative;
@@ -509,7 +499,6 @@
             line-height: 1.8;
         }
 
-        /* === STATS BAR (New block — trading stats) === */
         .stats-bar {
             background: var(--bg-card);
             border-top: 1px solid var(--border);
@@ -557,12 +546,6 @@
             letter-spacing: 1px;
         }
 
-        /* === ANIMATED COUNTER === */
-        .count-up {
-            display: inline-block;
-        }
-
-        /* === ABOUT === */
         .about {
             background: var(--bg-surface);
         }
@@ -633,7 +616,6 @@
             font-weight: 500;
         }
 
-        /* === PERFORMANCE CHART SECTION (New!) === */
         .performance {
             background: var(--bg);
         }
@@ -681,7 +663,6 @@
             color: var(--green);
         }
 
-        /* Animated bars chart */
         .perf-chart {
             display: flex;
             align-items: flex-end;
@@ -705,6 +686,7 @@
             border-radius: 6px 6px 2px 2px;
             background: linear-gradient(to top, var(--green-deep), var(--green));
             min-height: 8px;
+            height: 8px;
             transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             opacity: 0.85;
@@ -750,7 +732,6 @@
             border-radius: 3px;
         }
 
-        /* === METHODOLOGY === */
         .methodology {
             background: var(--bg-surface);
         }
@@ -814,7 +795,6 @@
             line-height: 1.7;
         }
 
-        /* === JOURNEY (Horizontal scroll cards) === */
         .journey {
             background: var(--bg);
             overflow: hidden;
@@ -887,7 +867,6 @@
             line-height: 1.6;
         }
 
-        /* === GALLERY === */
         .gallery {
             background: var(--bg-surface);
         }
@@ -942,7 +921,6 @@
             font-weight: 500;
         }
 
-        /* === COMPARISON === */
         .comparison {
             background: var(--bg);
         }
@@ -997,7 +975,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* === TESTIMONIALS (New block!) === */
         .testimonials {
             background: var(--bg-surface);
         }
@@ -1044,7 +1021,6 @@
             font-weight: 600;
         }
 
-        /* === TIMER === */
         .timer-section {
             background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
             text-align: center;
@@ -1093,7 +1069,6 @@
             margin-top: 6px;
         }
 
-        /* === FOOTER === */
         .footer {
             background: var(--bg);
             padding: 48px 40px 32px;
@@ -1140,7 +1115,6 @@
             opacity: 0.6;
         }
 
-        /* === REVEAL === */
         .reveal {
             opacity: 0;
             transform: translateY(40px);
@@ -1152,7 +1126,6 @@
             transform: translateY(0);
         }
 
-        /* === RESPONSIVE === */
         @media (max-width: 1024px) {
             .hero-inner {
                 grid-template-columns: 1fr;
@@ -1161,11 +1134,8 @@
             }
 
             .hero-desc { margin: 0 auto 32px; }
-
             .hero-ticker { margin: 0 auto 36px; }
-
             .hero-buttons { justify-content: center; }
-
             .hero-visual { order: -1; }
 
             .hero-photo-container {
@@ -1182,11 +1152,8 @@
             }
 
             .about-tags { justify-content: center; }
-
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
-
             .method-grid { grid-template-columns: 1fr 1fr; }
-
             .test-grid { grid-template-columns: 1fr; }
         }
 
@@ -1218,14 +1185,10 @@
 
             .section { padding: 64px 20px; }
             .section-title { font-size: 2rem; }
-
             .stats-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
             .stat-number { font-size: 1.8rem; }
-
             .method-grid { grid-template-columns: 1fr; }
-
             .gallery-grid { grid-template-columns: 1fr; }
-
             .comp-cell { padding: 12px 10px; font-size: 0.78rem; }
 
             .hero-photo-container {
@@ -1233,28 +1196,19 @@
             }
 
             .float-badge { display: none; }
-
             .timer-display { gap: 10px; }
             .timer-box { min-width: 72px; padding: 16px 12px; }
             .timer-val { font-size: 2rem; }
-
             .perf-container { padding: 24px 16px; }
-
             .timer-section { padding: 60px 20px; }
-
             .stats-bar { padding: 32px 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Grid background -->
     <div class="grid-bg"></div>
-
-    <!-- Canvas for chart lines -->
     <canvas id="chartCanvas"></canvas>
-
-    <!-- Floating candlesticks -->
     <div id="candles"></div>
 
     <!-- Navbar -->
@@ -1269,7 +1223,7 @@
             <li><a href="#performance">Performance</a></li>
             <li><a href="#methodology">Strategy</a></li>
             <li><a href="#journey">Journey</a></li>
-            <li><a href="https://t.me/AlexReynoldsTrader" target="_blank" class="nav-cta">Join Free</a></li>
+            <li><a href="https://tg.trading-top.com/6SnDcH3SPP" target="_blank" class="nav-cta">Join Free</a></li>
         </ul>
         <button class="nav-toggle" id="navToggle" aria-label="Menu">
             <span></span><span></span><span></span>
@@ -1306,8 +1260,8 @@
                 </div>
 
                 <div class="hero-buttons">
-                    <a href="https://www.youtube.com/@AlexReynoldsTrades/videos" class="btn btn-primary" target="_blank">▶ Watch on YouTube</a>
-                    <a href="https://t.me/AlexReynoldsTrader" class="btn btn-ghost" target="_blank">Join Telegram</a>
+                    <a href="https://www.youtube.com/@luckyalex390/videos" class="btn btn-primary" target="_blank">▶ Watch on YouTube</a>
+                    <a href="https://tg.trading-top.com/6SnDcH3SPP" class="btn btn-ghost" target="_blank">Join Telegram</a>
                 </div>
             </div>
 
@@ -1550,7 +1504,7 @@
         <div class="gallery-grid reveal">
             <div class="gallery-card">
                 <img src="alex-work.jpg" alt="Alex trading setup">
-                <div class="gallery-card-overlay"><span>Lisbon penthouse views ✦</span></div>
+                <div class="gallery-card-overlay"><span>Trading from Lisbon ✦</span></div>
             </div>
             <div class="gallery-card">
                 <img src="alex-travel.jpg" alt="Alex travel">
@@ -1653,7 +1607,7 @@
                 <div class="timer-lbl">Seconds</div>
             </div>
         </div>
-        <a href="https://t.me/AlexReynoldsTrader" class="btn btn-primary" target="_blank">Claim Free VIP Access →</a>
+        <a href="https://tg.trading-top.com/6SnDcH3SPP" class="btn btn-primary" target="_blank">Claim Free VIP Access →</a>
     </section>
 
     <!-- Footer -->
@@ -1661,42 +1615,31 @@
         <div class="footer-brand">Alex Reynolds</div>
         <p class="footer-disclaimer">Trading involves significant risk. Past performance does not guarantee future results. Only trade with capital you can afford to lose. This is not financial advice.</p>
         <div class="footer-links">
-            <a href="https://www.youtube.com/@AlexReynoldsTrades/videos" target="_blank">YouTube</a>
-            <a href="https://t.me/AlexReynoldsTrader" target="_blank">Telegram</a>
+            <a href="https://www.youtube.com/@luckyalex390/videos" target="_blank">YouTube</a>
+            <a href="https://tg.trading-top.com/6SnDcH3SPP" target="_blank">Telegram</a>
         </div>
         <div class="footer-copy">© 2025 Alex Reynolds. All rights reserved.</div>
     </footer>
 
     <script>
-        // === FLOATING CANDLESTICKS ===
         const candlesContainer = document.getElementById('candles');
         for (let i = 0; i < 15; i++) {
             const candle = document.createElement('div');
             const isGreen = Math.random() > 0.4;
             candle.classList.add('candle-float', isGreen ? 'green' : 'red');
-
             const wickTop = Math.random() * 20 + 5;
             const bodyH = Math.random() * 30 + 10;
             const wickBot = Math.random() * 15 + 3;
-
-            candle.innerHTML = `
-                <div class="wick" style="height:${wickTop}px"></div>
-                <div class="body" style="height:${bodyH}px"></div>
-                <div class="wick" style="height:${wickBot}px"></div>
-            `;
-
+            candle.innerHTML = '<div class="wick" style="height:'+wickTop+'px"></div><div class="body" style="height:'+bodyH+'px"></div><div class="wick" style="height:'+wickBot+'px"></div>';
             candle.style.left = Math.random() * 100 + '%';
             candle.style.animationDuration = (Math.random() * 18 + 14) + 's';
             candle.style.animationDelay = (Math.random() * 12) + 's';
-
             candlesContainer.appendChild(candle);
         }
 
-        // === CHART CANVAS (animated lines) ===
         const canvas = document.getElementById('chartCanvas');
         const ctx = canvas.getContext('2d');
         let w, h;
-
         function resize() {
             w = canvas.width = window.innerWidth;
             h = canvas.height = window.innerHeight;
@@ -1713,19 +1656,19 @@
                 y = Math.max(h * 0.15, Math.min(h * 0.85, y));
                 points.push({ x, y });
             }
-            lines.push({ points, offset: 0, speed: 0.3 + Math.random() * 0.5, color: `rgba(52, 211, 153, ${0.15 + Math.random() * 0.15})` });
+            lines.push({ points, offset: 0, speed: 0.3 + Math.random() * 0.5, color: 'rgba(52,211,153,' + (0.15 + Math.random() * 0.15) + ')' });
         }
 
         function drawChart() {
             ctx.clearRect(0, 0, w, h);
-            lines.forEach(line => {
+            lines.forEach(function(line) {
                 line.offset += line.speed;
                 ctx.beginPath();
                 ctx.strokeStyle = line.color;
                 ctx.lineWidth = 1.5;
-                line.points.forEach((p, j) => {
-                    const x = p.x - line.offset;
-                    const nx = ((x % (w + 100)) + (w + 100)) % (w + 100);
+                line.points.forEach(function(p, j) {
+                    var x = p.x - line.offset;
+                    var nx = ((x % (w + 100)) + (w + 100)) % (w + 100);
                     if (j === 0) ctx.moveTo(nx, p.y);
                     else ctx.lineTo(nx, p.y);
                 });
@@ -1735,70 +1678,49 @@
         }
         drawChart();
 
-        // === NAVBAR ===
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
+        var navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function() {
             navbar.classList.toggle('scrolled', window.scrollY > 40);
         });
 
-        // === MOBILE NAV ===
-        const navToggle = document.getElementById('navToggle');
-        const navLinks = document.getElementById('navLinks');
-        navToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
-        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('active')));
+        var navToggle = document.getElementById('navToggle');
+        var navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', function() { navLinks.classList.toggle('active'); });
+        navLinks.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { navLinks.classList.remove('active'); }); });
 
-        // === SCROLL REVEAL ===
-        const reveals = document.querySelectorAll('.reveal');
-        const revealObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        var reveals = document.querySelectorAll('.reveal');
+        var revealObs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.12 });
-        reveals.forEach(el => revealObs.observe(el));
+        reveals.forEach(function(el) { revealObs.observe(el); });
 
-        // === COUNT UP ===
-        const counters = document.querySelectorAll('.count-up');
-        const counterObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
+        var counters = document.querySelectorAll('.count-up');
+        var counterObs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
                 if (e.isIntersecting) {
-                    const el = e.target;
-                    const target = parseInt(el.dataset.target);
-                    let current = 0;
-                    const step = Math.ceil(target / 60);
-                    const timer = setInterval(() => {
+                    var el = e.target;
+                    var target = parseInt(el.dataset.target);
+                    var current = 0;
+                    var step = Math.ceil(target / 60);
+                    var timer = setInterval(function() {
                         current += step;
-                        if (current >= target) {
-                            current = target;
-                            clearInterval(timer);
-                        }
+                        if (current >= target) { current = target; clearInterval(timer); }
                         el.textContent = current.toLocaleString();
                     }, 25);
                     counterObs.unobserve(el);
                 }
             });
         }, { threshold: 0.5 });
-        counters.forEach(c => counterObs.observe(c));
+        counters.forEach(function(c) { counterObs.observe(c); });
 
-        // === PERFORMANCE BARS ANIMATION ===
-        const perfBars = document.querySelectorAll('.perf-bar');
-        const barObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    const bars = e.target.querySelectorAll ? [e.target] : [];
-                    (e.target.closest ? [e.target] : []).forEach(bar => {
-                        bar.style.height = bar.dataset.height + 'px';
-                    });
-                    barObs.unobserve(e.target);
-                }
-            });
-        }, { threshold: 0.3 });
-
-        // Observe the chart container
-        const perfChart = document.getElementById('perfChart');
+        var perfBars = document.querySelectorAll('.perf-bar');
+        var perfChart = document.getElementById('perfChart');
         if (perfChart) {
-            const perfChartObs = new IntersectionObserver((entries) => {
-                entries.forEach(e => {
+            var perfChartObs = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
                     if (e.isIntersecting) {
-                        perfBars.forEach((bar, i) => {
-                            setTimeout(() => {
+                        perfBars.forEach(function(bar, i) {
+                            setTimeout(function() {
                                 bar.style.height = bar.dataset.height + 'px';
                             }, i * 80);
                         });
@@ -1809,38 +1731,27 @@
             perfChartObs.observe(perfChart);
         }
 
-        // === 11-HOUR TIMER ===
         function startTimer() {
-            const KEY = 'alexTimerEnd';
-            let end = localStorage.getItem(KEY);
-
+            var KEY = 'alexTimerEnd';
+            var end = localStorage.getItem(KEY);
             if (!end || parseInt(end) <= Date.now()) {
                 end = Date.now() + 11 * 60 * 60 * 1000;
                 localStorage.setItem(KEY, end);
             }
-
             function update() {
-                let diff = Math.max(0, Math.floor((parseInt(end) - Date.now()) / 1000));
-
+                var diff = Math.max(0, Math.floor((parseInt(end) - Date.now()) / 1000));
                 if (diff <= 0) {
                     end = Date.now() + 11 * 60 * 60 * 1000;
                     localStorage.setItem(KEY, end);
                     diff = 11 * 60 * 60;
                 }
-
-                const hrs = Math.floor(diff / 3600);
-                const min = Math.floor((diff % 3600) / 60);
-                const sec = diff % 60;
-
-                document.getElementById('hours').textContent = String(hrs).padStart(2, '0');
-                document.getElementById('minutes').textContent = String(min).padStart(2, '0');
-                document.getElementById('seconds').textContent = String(sec).padStart(2, '0');
+                document.getElementById('hours').textContent = String(Math.floor(diff / 3600)).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(diff % 60).padStart(2, '0');
             }
-
             update();
             setInterval(update, 1000);
         }
-
         startTimer();
     </script>
 </body>
